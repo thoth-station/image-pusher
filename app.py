@@ -16,8 +16,37 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 """This is the main script of the template project."""
+import click
+import logging
 
-from template.version import __version__
+from thoth.common import init_logging
+from thoth.analyzer import run_command
 
-if __name__ == "__main__":
-    print(f"A template project with Thoth integration, v{__version__}.")
+
+
+init_logging()
+
+_LOGGER = logging.getLogger('image_pusher')
+
+
+
+@click.group()
+def cli():
+	pass
+
+
+@cli.command(name='push')
+@click.argument('src', nargs=1)
+@click.argument('dst', nargs=1)
+def push(src, dst):
+	'''
+		[SRC] [DST]
+		Push a container image from a source to an external registry
+	'''
+	skopeo_cmd = f'skopeo copy {src} {dst}'
+	run_command(skopeo_cmd)
+
+
+
+if __name__ == '__main__':
+	cli()
