@@ -32,21 +32,21 @@ _LOGGER = logging.getLogger('image_pusher')
 
 @click.group()
 def cli():
-	pass
+    pass
 
 
 @cli.command(name='push')
 @click.argument('src', nargs=1)
 @click.argument('dst', nargs=1)
 def push(src, dst):
-	'''
-		[SRC] [DST]
-		Push a container image from a source to an external registry
-	'''
-	skopeo_cmd = f'skopeo copy {src} {dst}'
-	run_command(skopeo_cmd)
+    '''
+        [SRC] [DST]
+        Push a container image from a source to an external registry
+    '''
+    skopeo_cmd = f'skopeo copy {src} {dst}'
+    run_command(skopeo_cmd)
 
 
 
 if __name__ == '__main__':
-	cli()
+    cli()
