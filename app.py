@@ -33,9 +33,16 @@ _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin",
 
 @click.group()
 @click.option(
-    "--verbose", "-v", is_flag=True, envvar="THOTH_VERBOSE_IMAGE_PUSHER", help="Be verbose about what is going on."
+    "--verbose",
+    "-v",
+    is_flag=True,
+    envvar="THOTH_VERBOSE_IMAGE_PUSHER",
+    help="Be verbose about what is going on."
 )
 def cli(verbose):
+    """
+        The entrypoint for the Command Line Interface tool
+    """
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
@@ -47,14 +54,14 @@ def cli(verbose):
     "-us",
     type=str,
     envvar="THOTH_SRC_REGISTRY_USER",
-    help="Username used in the source registry.",
+    help="Username used in the source registry."
 )
 @click.option(
     "--pass-src",
     "-ps",
     type=str,
     envvar="THOTH_SRC_REGISTRY_PASSWORD",
-    help="Password for the source registry.",
+    help="Password for the source registry."
 )
 @click.argument('dst', nargs=1)
 @click.option(
@@ -62,20 +69,20 @@ def cli(verbose):
     "-ud",
     type=str,
     envvar="THOTH_DST_REGISTRY_USER",
-    help="Username used in the target registry.",
+    help="Username used in the target registry."
 )
 @click.option(
     "--pass-dst",
     "-pd",
     type=str,
     envvar="THOTH_DST_REGISTRY_PASSWORD",
-    help="Password for the target registry.",
+    help="Password for the target registry."
 )
 def push(src, dst, user_src=None, pass_src=None, user_dst=None, pass_dst=None):
-    '''
+    """
         [SRC] [DST]
         Push a container image from a source to an external registry
-    '''
+    """
     _LOGGER.debug(user_src)
     _LOGGER.debug(pass_src)
     _LOGGER.debug(user_dst)
@@ -98,7 +105,7 @@ def push(src, dst, user_src=None, pass_src=None, user_dst=None, pass_dst=None):
             cmd += f":{pass_dst}"
 
         cmd += " "
-    
+
     image_name = src.rsplit("/", maxsplit=1)[1]
     if "quay.io" in dst:
         image_name = image_name.replace("@sha256", "")
@@ -117,10 +124,11 @@ def push(src, dst, user_src=None, pass_src=None, user_dst=None, pass_dst=None):
         if "Error determining manifest MIME type" in exc.stderr:
             # Manifest MIME type error is caused by the way image is build. we have no control over it.
             _LOGGER.warning("Ignoring error caused by invalid manifest MIME type during push: %s", str(exc))
-            return
-        else:
-            _LOGGER.exception("Failed to push image %r to external registry: %s", image_name, str(exc))
-    
+
+            return None
+
+        _LOGGER.exception("Failed to push image %r to external registry: %s", image_name, str(exc))
+
     return output
 
 
