@@ -43,28 +43,61 @@ _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin",
     "--verbose", "-v", is_flag=True, envvar="THOTH_VERBOSE_IMAGE_PUSHER", help="Be verbose about what is going on."
 )
 def cli(verbose: bool):
-    """
-        The entrypoint for the Command Line Interface tool
-    """
+    """A simple wrapper for manipulating with container image using skopeo."""
     _LOGGER.info("Running thoth.image_pusher in version %r", __component_version__)
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
 
 @cli.command(name="push")
-@click.argument("src", nargs=1)
 @click.option(
-    "--user-src", "-us", type=str, envvar="THOTH_SRC_REGISTRY_USER", help="Username used in the source registry."
+    "--src",
+    type=str,
+    required=True,
+    envvar="THOTH_IMAGE_PUSH_SRC",
+    metavar="SRC",
+    help="Source (with container image registry) to pull an image from.",
 )
 @click.option(
-    "--pass-src", "-ps", type=str, envvar="THOTH_SRC_REGISTRY_PASSWORD", help="Password for the source registry."
+    "--dst",
+    type=str,
+    required=True,
+    envvar="THOTH_IMAGE_PUSH_DST",
+    metavar="DST",
+    help="Destination (with container image registry) to push an image to.",
+)
+@click.option(
+    "--user-src",
+    "-us",
+    type=str,
+    envvar="THOTH_SRC_REGISTRY_USER",
+    metavar="USR",
+    help="Username used in the source registry.",
+)
+@click.option(
+    "--pass-src",
+    "-ps",
+    type=str,
+    envvar="THOTH_SRC_REGISTRY_PASSWORD",
+    metavar="PASS",
+    help="Password for the source registry.",
 )
 @click.argument("dst", nargs=1)
 @click.option(
-    "--user-dst", "-ud", type=str, envvar="THOTH_DST_REGISTRY_USER", help="Username used in the target registry."
+    "--user-dst",
+    "-ud",
+    type=str,
+    envvar="THOTH_DST_REGISTRY_USER",
+    metavar="USR",
+    help="Username used in the target registry.",
 )
 @click.option(
-    "--pass-dst", "-pd", type=str, envvar="THOTH_DST_REGISTRY_PASSWORD", help="Password for the target registry."
+    "--pass-dst",
+    "-pd",
+    type=str,
+    envvar="THOTH_DST_REGISTRY_PASSWORD",
+    metavar="PASS",
+    help="Password for the target registry.",
 )
 def push(
     src: str,
@@ -74,10 +107,7 @@ def push(
     user_dst: Optional[str] = None,
     pass_dst: Optional[str] = None,
 ):
-    """
-        [SRC] [DST]
-        Push a container image from a source to an external registry
-    """
+    """Push a container image from a source to an external registry."""
     cmd = f"{_SKOPEO_EXEC_PATH} copy {src} {dst}"
 
     if user_src:

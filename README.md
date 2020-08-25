@@ -8,7 +8,7 @@ You can manage all the dependancies using the provided Pipfile. In order to use 
 
 ```bash
 pipenv shell  # create the virtual environment
-python app.py push src=SOURCE_REGISTRY dst=TARGET_REGISTRY
+python app.py push --src=SOURCE_REGISTRY --dst=TARGET_REGISTRY
 ```
 
 Additionally, you can use the following optional arguments with the above command:
