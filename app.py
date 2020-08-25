@@ -21,7 +21,13 @@ import logging
 import click
 
 from thoth.common import init_logging
+from thoth.common import __version__ as __common_version__
 from thoth.analyzer import run_command
+from thoth.analyzer import __version__ as __analyzer_version__
+
+__version__ = "0.0.1"
+__component_version__ = f"{__version__}+analyzer.{__analyzer_version__}.common.{__common_version__}"
+
 
 init_logging()
 
@@ -43,6 +49,7 @@ def cli(verbose):
     """
         The entrypoint for the Command Line Interface tool
     """
+    _LOGGER.info("Running thoth.image_pusher in version %r", __component_version__)
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
 
