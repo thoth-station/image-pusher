@@ -25,7 +25,7 @@ from thoth.analyzer import run_command
 
 init_logging()
 
-_LOGGER = logging.getLogger("image_pusher")
+_LOGGER = logging.getLogger("thoth.image_pusher")
 
 _HERE_DIR = os.path.dirname(os.path.abspath(__file__))
 _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin", "skopeo"))
