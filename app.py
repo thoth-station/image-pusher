@@ -17,6 +17,7 @@
 
 import os
 import logging
+from typing import Optional
 
 import click
 
@@ -24,14 +25,14 @@ from thoth.common import init_logging
 from thoth.common import __version__ as __common_version__
 from thoth.analyzer import run_command
 from thoth.analyzer import __version__ as __analyzer_version__
+from thoth.analyzer import CommandError
 
 __version__ = "0.0.1"
 __component_version__ = f"{__version__}+analyzer.{__analyzer_version__}.common.{__common_version__}"
 
-
 init_logging()
 
-_LOGGER = logging.getLogger("image_pusher")
+_LOGGER = logging.getLogger("thoth.image_pusher")
 
 _HERE_DIR = os.path.dirname(os.path.abspath(__file__))
 _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin", "skopeo"))
@@ -39,13 +40,9 @@ _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin",
 
 @click.group()
 @click.option(
-    "--verbose",
-    "-v",
-    is_flag=True,
-    envvar="THOTH_VERBOSE_IMAGE_PUSHER",
-    help="Be verbose about what is going on."
+    "--verbose", "-v", is_flag=True, envvar="THOTH_VERBOSE_IMAGE_PUSHER", help="Be verbose about what is going on."
 )
-def cli(verbose):
+def cli(verbose: bool):
     """
         The entrypoint for the Command Line Interface tool
     """
@@ -54,47 +51,33 @@ def cli(verbose):
         _LOGGER.setLevel(logging.DEBUG)
 
 
-@cli.command(name='push')
-@click.argument('src', nargs=1)
+@cli.command(name="push")
+@click.argument("src", nargs=1)
 @click.option(
-    "--user-src",
-    "-us",
-    type=str,
-    envvar="THOTH_SRC_REGISTRY_USER",
-    help="Username used in the source registry."
+    "--user-src", "-us", type=str, envvar="THOTH_SRC_REGISTRY_USER", help="Username used in the source registry."
 )
 @click.option(
-    "--pass-src",
-    "-ps",
-    type=str,
-    envvar="THOTH_SRC_REGISTRY_PASSWORD",
-    help="Password for the source registry."
+    "--pass-src", "-ps", type=str, envvar="THOTH_SRC_REGISTRY_PASSWORD", help="Password for the source registry."
 )
-@click.argument('dst', nargs=1)
+@click.argument("dst", nargs=1)
 @click.option(
-    "--user-dst",
-    "-ud",
-    type=str,
-    envvar="THOTH_DST_REGISTRY_USER",
-    help="Username used in the target registry."
+    "--user-dst", "-ud", type=str, envvar="THOTH_DST_REGISTRY_USER", help="Username used in the target registry."
 )
 @click.option(
-    "--pass-dst",
-    "-pd",
-    type=str,
-    envvar="THOTH_DST_REGISTRY_PASSWORD",
-    help="Password for the target registry."
+    "--pass-dst", "-pd", type=str, envvar="THOTH_DST_REGISTRY_PASSWORD", help="Password for the target registry."
 )
-def push(src, dst, user_src=None, pass_src=None, user_dst=None, pass_dst=None):
+def push(
+    src: str,
+    dst: str,
+    user_src: Optional[str] = None,
+    pass_src: Optional[str] = None,
+    user_dst: Optional[str] = None,
+    pass_dst: Optional[str] = None,
+):
     """
         [SRC] [DST]
         Push a container image from a source to an external registry
     """
-    _LOGGER.debug(user_src)
-    _LOGGER.debug(pass_src)
-    _LOGGER.debug(user_dst)
-    _LOGGER.debug(pass_dst)
-
     cmd = f"{_SKOPEO_EXEC_PATH} copy {src} {dst}"
 
     if user_src:
@@ -139,6 +122,5 @@ def push(src, dst, user_src=None, pass_src=None, user_dst=None, pass_dst=None):
     return output
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()
