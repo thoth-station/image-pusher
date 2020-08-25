@@ -111,13 +111,8 @@ def push(
         command = run_command(cmd)
         _LOGGER.debug("%s stdout:\n%s\n%s", _SKOPEO_EXEC_PATH, command.stdout, command.stderr)
     except CommandError as exc:
-        if "Error determining manifest MIME type" in exc.stderr:
-            # Manifest MIME type error is caused by the way image is build. we have no control over it.
-            _LOGGER.warning("Ignoring error caused by invalid manifest MIME type during push: %s", str(exc))
-
-            return None
-
         _LOGGER.exception("Failed to push image %r to external registry: %s", image_name, str(exc))
+        raise
 
     return output
 
