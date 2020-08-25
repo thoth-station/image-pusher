@@ -15,6 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+"""Manipulate with container image using skopeo."""
+
 import os
 import logging
 from typing import Optional
@@ -43,7 +45,7 @@ _SKOPEO_EXEC_PATH = os.getenv("SKOPEO_EXEC_PATH", os.path.join(_HERE_DIR, "bin",
     "--verbose", "-v", is_flag=True, envvar="THOTH_VERBOSE_IMAGE_PUSHER", help="Be verbose about what is going on."
 )
 def cli(verbose: bool):
-    """A simple wrapper for manipulating with container image using skopeo."""
+    """Manipulate with container image using skopeo."""
     _LOGGER.info("Running thoth.image_pusher in version %r", __component_version__)
     if verbose:
         _LOGGER.setLevel(logging.DEBUG)
