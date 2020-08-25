@@ -22,6 +22,7 @@ import click
 
 from thoth.common import init_logging
 from thoth.analyzer import run_command
+from thoth.analyzer import CommandError
 
 init_logging()
 
